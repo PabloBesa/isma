@@ -104,31 +104,29 @@
   .p-pac > div:first-child { border-left: 0; }
   .p-pac .k { font-size: 9.5px; text-transform: uppercase; letter-spacing: .7px; color: #5d6878; }
   .p-pac .v { font-size: 14px; font-weight: 600; min-height: 18px; overflow-wrap: anywhere; }
-  .p-dg { margin-top: 10px; font-size: 13px; }
+  .p-dg { margin-top: 10px; font-size: 13px; min-height: 19px; }
   .p-dg b { color: var(--brand); }
 
-  .p-rp { margin-top: 10px; font-size: 13px; line-height: 1.45; flex: none; height: 1.95in; overflow: hidden; }
+  /* Cuerpo en dos columnas: indicación a la izquierda, esquema a la derecha (tamaño fijo). */
+  .p-body { display: grid; grid-template-columns: 36% 1fr; gap: 0 22px; flex: 1; min-height: 0; margin-top: 10px; border-top: 1px solid #e3e7ed; padding-top: 12px; }
+  .p-rp { font-size: 13px; line-height: 1.45; overflow: hidden; }
   .p-rp .rp { font-weight: 700; color: var(--brand); font-size: 15px; margin-right: 6px; }
   .p-rp ul { margin: 4px 0 0; padding-left: 22px; }
-  .p-rp ul.two { columns: 2; column-gap: 28px; }
-  .p-rp li { break-inside: avoid; }
-  .p-rp .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-top: 4px; }
-  .p-rp .cols h4 { margin: 4px 0 0; font-size: 12.5px; color: var(--brand); }
+    .p-rp li { break-inside: avoid; }
+  .p-rp .cols { margin-top: 4px; }
+  .p-rp .cols h4 { margin: 12px 0 0; font-size: 12.5px; color: var(--brand); }
   .p-rp .cols ul { padding-left: 18px; margin-top: 2px; }
   .p-rp .none { color: #555; font-style: italic; }
   .p-rp .pend { color: var(--warn); font-weight: 600; }
 
-  .p-draw { flex: none; height: 4.05in; display: flex; flex-direction: column; margin-top: 10px; border-top: 1px solid #e3e7ed; padding-top: 8px; }
-  .feet { flex: 1; min-height: 0; display: flex; justify-content: center; gap: 4%; }
-  .foot { width: 38%; height: 100%; display: flex; flex-direction: column; align-items: center; min-height: 0; }
+  .p-draw { height: 100%; min-height: 0; display: flex; flex-direction: column; }
+  .feet { flex: 1; min-height: 0; display: flex; justify-content: center; gap: 2%; }
+  .foot { width: 49%; height: 100%; display: flex; flex-direction: column; align-items: center; min-height: 0; }
   .foot .ft { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; color: var(--brand); text-transform: uppercase; margin-bottom: 4px; }
   .foot svg { flex: 1; min-height: 0; width: 100%; display: block; }
-  .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; justify-content: center; font-size: 11px; color: #333; margin-top: 6px; height: 32px; align-content: flex-start; overflow: hidden; }
-  .legend span { display: inline-flex; align-items: center; gap: 5px; }
-  .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
   .orient { text-align: center; font-size: 9.5px; color: #777; margin-top: 2px; }
 
-  .p-obs { margin-top: 8px; font-size: 12.5px; white-space: pre-wrap; flex: 1; min-height: 0; overflow: hidden; }
+  .p-obs { margin-top: 8px; font-size: 12.5px; white-space: pre-wrap; flex: none; height: 0.85in; overflow: hidden; }
   .p-obs b { color: var(--brand); }
 
   .p-foot { display: flex; justify-content: flex-end; margin-top: 10px; }
@@ -231,13 +229,14 @@
         </section>
 
         <div class="p-dg" id="pDg"></div>
+        <div class="p-body">
         <section class="p-rp" id="pRp"></section>
 
         <section class="p-draw">
           <div class="feet" id="pFeet"></div>
           <div class="orient">Esquema en vista superior de la plantilla. Medidas en milímetros.</div>
-          <div class="legend" id="pLegend"></div>
         </section>
+        </div>
 
         <div class="p-obs" id="pObs"></div>
 
@@ -490,11 +489,6 @@ function renderPreview() {
   $('pFeet').innerHTML = draw.map(([side, key]) =>
     `<div class="foot"><div class="ft">Pie ${side === 'L' ? 'izquierdo' : 'derecho'}</div>${footSVG(side, state.sets[key])}</div>`
   ).join('');
-
-  const used = new Set();
-  draw.forEach(([, key]) => ELEMENTS.forEach(e => { if (state.sets[key].el[e.id].on) used.add(e.id); }));
-  $('pLegend').innerHTML = ELEMENTS.filter(e => used.has(e.id))
-    .map(e => `<span><i style="background:${e.color};opacity:.7"></i>${e.nombre}</span>`).join('');
 
   const obs = $('obs').value.trim();
   $('pObs').innerHTML = obs ? `<b>Observaciones:</b> ${esc(obs)}` : '';
