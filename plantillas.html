@@ -403,8 +403,8 @@ function footSVG(side, set) {
     ? `<rect x="0" y="0" width="66" height="99" fill="url(#gcam${sfx})"/>`
     : `<rect x="66" y="0" width="74" height="99" fill="url(#gcal${sfx})"/>`;
   if (on('am')) shapes += `<ellipse cx="30" cy="190" rx="28" ry="62" fill="${EL.am.color}" fill-opacity=".38"/>`;
-  // Realce posteromedial: cuña triangular, base en el borde medial del talón, vértice hacia lateral.
-  if (on('pm')) shapes += `<polygon points="0,218 0,336 98,280" fill="url(#gpm${sfx})" stroke="${EL.pm.color}" stroke-width=".8" stroke-opacity=".7"/>`;
+  // Realce posteromedial: cuña desde el borde medial (inicio del talón) en diagonal hasta el borde posterior del talón.
+  if (on('pm')) shapes += `<polygon points="-10,226 41,226 113,332 -10,332" fill="url(#gpm${sfx})" stroke="${EL.pm.color}" stroke-width=".8" stroke-opacity=".7"/>`;
   // Realce posterolateral tipo Coleman: triángulo desde la base del 5° metatarsiano hacia el talón.
   if (on('pl')) shapes += `<polygon points="123,158 152,340 36,340" fill="url(#gpl${sfx})" stroke="${EL.pl.color}" stroke-width=".8" stroke-opacity=".7"/>`;
   if (on('at')) shapes += `<rect x="0" y="240" width="140" height="90" fill="url(#hat${sfx})"/>`;
@@ -418,7 +418,7 @@ function footSVG(side, set) {
   if (on('br')) labels += lab(70, 113, mmTxt('br'), EL.br.color);
   if (on('om')) labels += lab(63, 175, mmTxt('om'), EL.om.color);
   if (on('am')) labels += lab(30, 198, mmTxt('am'), EL.am.color);
-  if (on('pm')) labels += lab(30, 266, mmTxt('pm'), EL.pm.color);
+  if (on('pm')) labels += lab(63, 298, mmTxt('pm'), EL.pm.color);
   if (on('pl')) labels += lab(92, 270, mmTxt('pl'), EL.pl.color);
   if (on('at')) labels += lab(70, 333, 'Alza ' + mmTxt('at'), EL.at.color);
 
