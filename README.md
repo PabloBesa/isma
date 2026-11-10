@@ -18,5 +18,6 @@ No se guarda ni se envía ningún dato del paciente: todo ocurre en el navegador
 ### Configuración
 
 - Datos del médico: objeto `DOCTOR` al inicio del script en `plantillas.html`.
+- Lugares de atención: arreglo `SEDES` (nombre impreso y logo en `logos/`). La elección se recuerda en el navegador.
 - Firma: a mano sobre la línea, después de imprimir.
 - Elementos: arreglo `ELEMENTS` en el mismo archivo.

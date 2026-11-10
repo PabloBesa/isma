@@ -19,18 +19,21 @@
     --radius: 10px;
     --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   }
+  /* Tinte de pantalla según lugar de atención (no afecta la hoja impresa). */
+  :root[data-sede="uc"]     { --brand: #5b2a86; --brand-soft: #efe8f6; --bg: #ece6f3; --accent: #2a7bd4; --strip: linear-gradient(90deg, #2a7bd4, #5b2a86 55%, #a37cc9); }
+  :root[data-sede="sotero"] { --brand: #0f3380; --brand-soft: #e3f4f2; --bg: #e2f1f0; --accent: #1683d6; --strip: linear-gradient(90deg, #1683d6, #0f3380 55%, #00cdb4); }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body { font-family: var(--font); color: var(--ink); background: var(--bg); font-size: 14px; }
 
   /* ---------- App layout ---------- */
   .app { display: grid; grid-template-columns: minmax(340px, 440px) 1fr; min-height: 100vh; }
-  aside.form { background: var(--panel); border-right: 1px solid var(--line); padding: 20px 20px 40px; overflow-y: auto; max-height: 100vh; position: sticky; top: 0; }
+  aside.form { background: var(--panel); border-right: 1px solid var(--line); border-top: 6px solid transparent; border-image: var(--strip, none) 1; padding: 20px 20px 40px; overflow-y: auto; max-height: 100vh; position: sticky; top: 0; }
   main.preview { padding: 16px 24px 40px; min-width: 0; }
 
   .brand-bar { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
   .brand-bar h1 { font-size: 18px; margin: 0; color: var(--brand); letter-spacing: .2px; }
-  .brand-bar span { font-size: 12px; color: var(--muted); }
+  .brand-bar span { font-size: 12px; font-weight: 600; color: var(--brand); text-align: right; }
 
   fieldset { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px 14px; margin: 0 0 14px; }
   legend { font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .6px; color: var(--brand); padding: 0 6px; }
@@ -83,6 +86,7 @@
 
   .page-wrap { margin: 0 auto; position: relative; }
   .page {
+    --brand: #1d3557;
     width: 8.5in; height: 11in; background: #fff; color: #111;
     padding: 0.5in 0.6in 0.45in; box-shadow: 0 4px 24px rgba(20, 30, 50, .14);
     transform-origin: top left; position: absolute; top: 0; left: 0;
@@ -92,12 +96,14 @@
   }
 
   /* ---------- Printed page ---------- */
-  .p-head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid var(--brand); padding-bottom: 10px; }
+  .p-head { display: flex; justify-content: space-between; align-items: center; gap: 20px; border-bottom: 2px solid var(--brand); padding-bottom: 10px; }
+  .p-logo img { height: 0.62in; max-width: 2.8in; object-fit: contain; object-position: left center; display: block; }
+  .p-doc { text-align: right; }
   .p-doc .n { font-size: 20px; font-weight: 700; color: var(--brand); letter-spacing: .2px; }
   .p-doc .s { font-size: 12px; color: #333; margin-top: 2px; }
-  .p-title { text-align: right; }
-  .p-title .t { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--brand); }
-  .p-title .d { font-size: 12px; color: #333; margin-top: 3px; }
+  .p-titlebar { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; }
+  .p-titlebar .t { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--brand); }
+  .p-titlebar .d { font-size: 12px; color: #333; }
 
   .p-pac { display: grid; grid-template-columns: 2.6fr 1.3fr 1fr; gap: 0; border: 1px solid #9aa6b6; border-radius: 6px; margin-top: 14px; }
   .p-pac > div { padding: 6px 10px; border-left: 1px solid #c9d1dc; min-width: 0; }
@@ -157,8 +163,13 @@
   <aside class="form" id="form">
     <div class="brand-bar">
       <h1>Indicación de plantillas</h1>
-      <span id="docShort"></span>
+      <span id="sedeNow"></span>
     </div>
+
+    <fieldset>
+      <legend>Lugar de atención</legend>
+      <div class="seg wide" id="sedeSeg"></div>
+    </fieldset>
 
     <fieldset>
       <legend>Paciente</legend>
@@ -212,15 +223,16 @@
     <div class="page-wrap" id="pageWrap">
       <div class="page" id="page">
         <header class="p-head">
+          <div class="p-logo"><img id="pLogo" alt=""></div>
           <div class="p-doc">
             <div class="n" id="pDocName"></div>
             <div class="s" id="pDocSpec"></div>
           </div>
-          <div class="p-title">
-            <div class="t">Indicación de plantillas ortopédicas</div>
-            <div class="d" id="pFechaTop"></div>
-          </div>
         </header>
+        <div class="p-titlebar">
+          <div class="t">Indicación de plantillas ortopédicas</div>
+          <div class="d" id="pFechaTop"></div>
+        </div>
 
         <section class="p-pac">
           <div><div class="k">Paciente</div><div class="v" id="pNombre"></div></div>
@@ -263,9 +275,16 @@
 const DOCTOR = {
   nombre: 'Dr. Ismael Cañete Campos',
   rut: '16.360.878-2',
-  especialidad: 'Ortopedia y Traumatología Infantil',
-  institucion: 'Red de Salud UC CHRISTUS'
+  especialidad: 'Ortopedia y Traumatología Infantil'
 };
+// Lugares de atención: el seleccionado define el logo y la institución impresa.
+const SEDES = [
+  { id: 'uc',     corto: 'UC CHRISTUS',          nombre: 'Red de Salud UC CHRISTUS',    logo: 'logos/uc-christus.png' },
+  { id: 'sotero', corto: 'Hospital Sótero del Río', nombre: 'Hospital Dr. Sótero del Río', logo: 'logos/sotero.png' }
+];
+SEDES.forEach(s => { const i = new Image(); i.src = s.logo; });   // precarga
+let sede = SEDES[0];
+try { const g = localStorage.getItem('isma.sede'); sede = SEDES.find(s => s.id === g) || SEDES[0]; } catch (e) {}
 
 /* ===================== Elementos de la plantilla ===================== */
 const ELEMENTS = [
@@ -496,12 +515,17 @@ function renderPreview() {
 
 function renderDoctor() {
   $('pDocName').textContent = DOCTOR.nombre;
-  $('pDocSpec').textContent = DOCTOR.especialidad + ' · ' + DOCTOR.institucion;
+  $('pDocSpec').textContent = DOCTOR.especialidad;
   $('pSigName').textContent = DOCTOR.nombre;
   $('pSigRut').textContent = 'RUT ' + DOCTOR.rut;
   $('pSigSpec').textContent = DOCTOR.especialidad;
-  $('pSigInst').textContent = DOCTOR.institucion;
-  $('docShort').textContent = DOCTOR.nombre;
+  $('pSigInst').textContent = sede.nombre;
+  $('pLogo').src = sede.logo;
+  $('pLogo').alt = sede.nombre;
+  $('sedeSeg').innerHTML = SEDES.map(s =>
+    `<button type="button" data-sede="${s.id}" class="${s.id === sede.id ? 'act' : ''}">${s.corto}</button>`).join('');
+  $('sedeNow').textContent = sede.nombre;
+  document.documentElement.dataset.sede = sede.id;
 }
 
 /* ===================== Escala de la página en pantalla ===================== */
@@ -598,6 +622,13 @@ $('btnClear').addEventListener('click', () => {
   resetState();
   renderSets(); renderPreview();
   $('nombre').focus();
+});
+
+$('sedeSeg').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-sede]'); if (!b) return;
+  sede = SEDES.find(s => s.id === b.dataset.sede) || SEDES[0];
+  try { localStorage.setItem('isma.sede', sede.id); } catch (e) {}
+  renderDoctor();
 });
 
 window.addEventListener('resize', fitPage);
