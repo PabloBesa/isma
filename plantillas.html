@@ -99,7 +99,7 @@
   .p-title .t { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--brand); }
   .p-title .d { font-size: 12px; color: #333; margin-top: 3px; }
 
-  .p-pac { display: grid; grid-template-columns: 2.4fr 1.3fr .8fr .9fr; gap: 0; border: 1px solid #9aa6b6; border-radius: 6px; margin-top: 14px; }
+  .p-pac { display: grid; grid-template-columns: 2.6fr 1.3fr 1fr; gap: 0; border: 1px solid #9aa6b6; border-radius: 6px; margin-top: 14px; }
   .p-pac > div { padding: 6px 10px; border-left: 1px solid #c9d1dc; min-width: 0; }
   .p-pac > div:first-child { border-left: 0; }
   .p-pac .k { font-size: 9.5px; text-transform: uppercase; letter-spacing: .7px; color: #5d6878; }
@@ -131,8 +131,7 @@
 
   .p-foot { display: flex; justify-content: flex-end; margin-top: 10px; }
   .sig { width: 2.9in; text-align: center; font-size: 11.5px; line-height: 1.35; }
-  .sig .img { height: 0.85in; display: flex; align-items: flex-end; justify-content: center; }
-  .sig img { max-height: 0.85in; max-width: 2.6in; }
+  .sig .img { height: 0.85in; }
   .sig .ln { border-top: 1px solid #222; margin: 2px 0 4px; }
   .sig .n { font-weight: 700; font-size: 12.5px; }
 
@@ -176,18 +175,14 @@
           <input type="text" id="edad" autocomplete="off" placeholder="ej. 8 años">
         </div>
       </div>
+      <label class="f" for="dg">Diagnóstico</label>
+      <input type="text" id="dg" autocomplete="off" placeholder="ej. Pie plano flexible bilateral">
       <div class="row2">
-        <div>
-          <label class="f" for="calzado">N° de calzado</label>
-          <input type="text" id="calzado" autocomplete="off" placeholder="ej. 32">
-        </div>
         <div>
           <label class="f" for="fecha">Fecha</label>
           <input type="date" id="fecha">
         </div>
       </div>
-      <label class="f" for="dg">Diagnóstico</label>
-      <input type="text" id="dg" autocomplete="off" placeholder="ej. Pie plano flexible bilateral">
     </fieldset>
 
     <fieldset>
@@ -231,7 +226,6 @@
           <div><div class="k">Paciente</div><div class="v" id="pNombre"></div></div>
           <div><div class="k">RUT</div><div class="v" id="pRut"></div></div>
           <div><div class="k">Edad</div><div class="v" id="pEdad"></div></div>
-          <div><div class="k">N° calzado</div><div class="v" id="pCalzado"></div></div>
         </section>
 
         <div class="p-dg" id="pDg"></div>
@@ -247,7 +241,7 @@
 
         <footer class="p-foot">
           <div class="sig">
-            <div class="img"><img id="pFirma" alt=""></div>
+            <div class="img"></div>
             <div class="ln"></div>
             <div class="n" id="pSigName"></div>
             <div id="pSigRut"></div>
@@ -264,27 +258,24 @@
 <script>
 /* ===================== Configuración del médico =====================
    Editar aquí para cambiar los datos impresos en cada indicación.
-   La firma se carga desde el archivo indicado (PNG con fondo blanco o
-   transparente, en la misma carpeta). Si no existe, se imprime solo la línea. */
+   La firma se realiza a mano sobre la línea, después de imprimir. */
 const DOCTOR = {
   nombre: 'Dr. Ismael Cañete Campos',
   rut: '16.360.878-2',
-  especialidad: 'Ortopedia y Traumatología',
-  institucion: 'Red de Salud UC CHRISTUS',
-  firma: 'firma.png'
+  especialidad: 'Ortopedia y Traumatología Infantil',
+  institucion: 'Red de Salud UC CHRISTUS'
 };
 
 /* ===================== Elementos de la plantilla ===================== */
 const ELEMENTS = [
-  { id: 'pm', nombre: 'Realce posteromedial',     ayuda: 'Cuña medial de talón',                      mm: true,  color: '#1f56c4' },
-  { id: 'pl', nombre: 'Realce posterolateral',    ayuda: 'Cuña lateral de talón',                     mm: true,  color: '#c2410c' },
+  { id: 'pm', nombre: 'Realce posteromedial',     ayuda: 'Cuña medial de talón',                                  mm: true,  color: '#1f56c4' },
+  { id: 'pl', nombre: 'Realce posterolateral',    ayuda: 'Cuña desde la base del 5° metatarsiano (tipo Coleman)', mm: true,  color: '#c2410c' },
   { id: 'am', nombre: 'Arco longitudinal medial', ayuda: 'Soporte del arco',                          mm: true,  color: '#15803d' },
   { id: 'br', nombre: 'Barra retrocapital',       ayuda: 'Por detrás de las cabezas metatarsales',    mm: true,  color: '#7e22ce' },
   { id: 'om', nombre: 'Oliva metatarsal',         ayuda: 'Botón retrocapital central',                mm: true,  color: '#be123c' },
   { id: 'ca', nombre: 'Cuña de antepié',          ayuda: 'Medial o lateral',                          mm: true,  color: '#0e7490', lado: true },
-  { id: 'at', nombre: 'Alza de talón',            ayuda: 'Discrepancia de longitud de extremidades',  mm: true,  color: '#374151' },
-  { id: 'tc', nombre: 'Taza talonera',            ayuda: 'Contención de talón (profundidad)',         mm: true,  color: '#a16207' },
-  { id: 'dc', nombre: 'Descarga calcánea',        ayuda: 'Talonera blanda, ej. enfermedad de Sever',  mm: false, color: '#db2777' }
+  { id: 'at', nombre: 'Alza de talón',            ayuda: 'Discrepancia de longitud de extremidades',  mm: true,  color: '#374151' }
+
 ];
 const EL = Object.fromEntries(ELEMENTS.map(e => [e.id, e]));
 
@@ -292,7 +283,7 @@ const EL = Object.fromEntries(ELEMENTS.map(e => [e.id, e]));
 function newSet() {
   const el = {};
   ELEMENTS.forEach(e => { el[e.id] = { on: false, mm: '' }; if (e.lado) el[e.id].lado = 'medial'; });
-  return { largo: 'completa', el };
+  return { el };
 }
 function clone(o) { return JSON.parse(JSON.stringify(o)); }
 function isPristine(s) { return JSON.stringify(s) === JSON.stringify(newSet()); }
@@ -378,12 +369,6 @@ function renderSets() {
     return `<div class="set-block">
       <div class="set-head"><h3>${titulo}</h3>${copy}</div>
       <div class="set-body">
-        <div class="largo"><span>Largo de la plantilla</span>
-          <div class="seg">
-            <button type="button" class="${s.largo === 'completa' ? 'act' : ''}" data-set="${key}" data-largo="completa">Completa</button>
-            <button type="button" class="${s.largo === '34' ? 'act' : ''}" data-set="${key}" data-largo="34">3/4</button>
-          </div>
-        </div>
         ${rows}
       </div>
     </div>`;
@@ -406,49 +391,42 @@ function footSVG(side, set) {
 
   const defs = `
     <clipPath id="clip${sfx}"><path d="${OUTLINE}"/></clipPath>
-    <clipPath id="heel${sfx}"><rect x="-20" y="232" width="180" height="120"/></clipPath>
     <linearGradient id="gpm${sfx}" x1="0" x2="1"><stop offset="0" stop-color="${EL.pm.color}" stop-opacity=".6"/><stop offset="1" stop-color="${EL.pm.color}" stop-opacity=".1"/></linearGradient>
     <linearGradient id="gpl${sfx}" x1="0" x2="1"><stop offset="0" stop-color="${EL.pl.color}" stop-opacity=".1"/><stop offset="1" stop-color="${EL.pl.color}" stop-opacity=".6"/></linearGradient>
     <linearGradient id="gcam${sfx}" x1="0" x2="1"><stop offset="0" stop-color="${EL.ca.color}" stop-opacity=".6"/><stop offset="1" stop-color="${EL.ca.color}" stop-opacity=".1"/></linearGradient>
     <linearGradient id="gcal${sfx}" x1="0" x2="1"><stop offset="0" stop-color="${EL.ca.color}" stop-opacity=".1"/><stop offset="1" stop-color="${EL.ca.color}" stop-opacity=".6"/></linearGradient>
     <pattern id="hat${sfx}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${EL.at.color}" stroke-width="1.4" stroke-opacity=".55"/></pattern>
-    <pattern id="h34${sfx}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="5" stroke="#9aa3ae" stroke-width="1"/></pattern>`;
+`;
 
   let shapes = '';
-  if (set.largo === '34') shapes += `<rect x="0" y="0" width="140" height="99" fill="url(#h34${sfx})" opacity=".8"/>`;
   if (on('ca')) shapes += el.ca.lado === 'medial'
     ? `<rect x="0" y="0" width="66" height="99" fill="url(#gcam${sfx})"/>`
     : `<rect x="66" y="0" width="74" height="99" fill="url(#gcal${sfx})"/>`;
   if (on('am')) shapes += `<ellipse cx="30" cy="190" rx="28" ry="62" fill="${EL.am.color}" fill-opacity=".38"/>`;
-  if (on('pm')) shapes += `<rect x="0" y="240" width="72" height="90" fill="url(#gpm${sfx})"/>`;
-  if (on('pl')) shapes += `<rect x="72" y="240" width="70" height="90" fill="url(#gpl${sfx})"/>`;
+  // Realce posteromedial: cuña triangular, base en el borde medial del talón, vértice hacia lateral.
+  if (on('pm')) shapes += `<polygon points="0,218 0,336 98,280" fill="url(#gpm${sfx})" stroke="${EL.pm.color}" stroke-width=".8" stroke-opacity=".7"/>`;
+  // Realce posterolateral tipo Coleman: triángulo desde la base del 5° metatarsiano hacia el talón.
+  if (on('pl')) shapes += `<polygon points="123,158 152,340 36,340" fill="url(#gpl${sfx})" stroke="${EL.pl.color}" stroke-width=".8" stroke-opacity=".7"/>`;
   if (on('at')) shapes += `<rect x="0" y="240" width="140" height="90" fill="url(#hat${sfx})"/>`;
   if (on('br')) shapes += `<rect x="0" y="101" width="140" height="17" fill="${EL.br.color}" fill-opacity=".38"/>`;
   if (on('om')) shapes += `<path d="M63 122 C74 122 76 136 72 146 C69 154 66 158 63 160 C60 158 57 154 54 146 C50 136 52 122 63 122 Z" fill="${EL.om.color}" fill-opacity=".45" stroke="${EL.om.color}" stroke-width=".8"/>`;
-  if (on('dc')) shapes += `<circle cx="72" cy="290" r="14" fill="${EL.dc.color}" fill-opacity=".25" stroke="${EL.dc.color}" stroke-width="1.2" stroke-dasharray="3 2"/>`;
-  let cup = on('tc') ? `<g clip-path="url(#heel${sfx})"><path d="${OUTLINE}" fill="none" stroke="${EL.tc.color}" stroke-opacity=".55" stroke-width="16"/></g>` : '';
-
-  let extraLines = '';
-  if (set.largo === '34') extraLines += `<line x1="2" y1="99" x2="138" y2="99" stroke="#555" stroke-width="1" stroke-dasharray="4 3"/>`;
 
   // Etiquetas
   const lab = (x, y, t, c) => `<text x="${X(x)}" y="${y}" fill="${c}" font-size="9.5" font-weight="700" text-anchor="middle" stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round">${t}</text>`;
   let labels = '';
-  if (set.largo === '34') labels += lab(70, 52, 'Largo 3/4', '#555');
-  if (on('ca') && set.largo !== '34') labels += lab(el.ca.lado === 'medial' ? 34 : 104, 66, mmTxt('ca'), EL.ca.color);
+  if (on('ca')) labels += lab(el.ca.lado === 'medial' ? 34 : 104, 66, mmTxt('ca'), EL.ca.color);
   if (on('br')) labels += lab(70, 113, mmTxt('br'), EL.br.color);
   if (on('om')) labels += lab(63, 175, mmTxt('om'), EL.om.color);
   if (on('am')) labels += lab(30, 198, mmTxt('am'), EL.am.color);
-  if (on('pm')) labels += lab(40, 262, mmTxt('pm'), EL.pm.color);
-  if (on('pl')) labels += lab(100, 262, mmTxt('pl'), EL.pl.color);
+  if (on('pm')) labels += lab(30, 266, mmTxt('pm'), EL.pm.color);
+  if (on('pl')) labels += lab(92, 270, mmTxt('pl'), EL.pl.color);
   if (on('at')) labels += lab(70, 333, 'Alza ' + mmTxt('at'), EL.at.color);
-  if (on('tc')) labels += lab(L ? 124 : 124, 300, mmTxt('tc'), EL.tc.color);
 
   return `<svg viewBox="-8 -6 156 346" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Plantilla ${L ? 'izquierda' : 'derecha'}">
     <defs>${defs}</defs>
     <g transform="${flip}">
       <path d="${OUTLINE}" fill="#fff"/>
-      <g clip-path="url(#clip${sfx})">${shapes}${cup}${extraLines}</g>
+      <g clip-path="url(#clip${sfx})">${shapes}</g>
       <path d="${OUTLINE}" fill="none" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/>
     </g>
     ${labels}
@@ -462,8 +440,6 @@ function phrase(id, v) {
   const m = mm ? `${mm} mm` : '<span class="pend">__ mm</span>';
   switch (id) {
     case 'ca': return `Cuña de antepié ${v.lado} de ${m}`;
-    case 'tc': return `Taza talonera de ${m} de profundidad`;
-    case 'dc': return 'Descarga calcánea con material blando';
     default:   return `${e.nombre} de ${m}`;
   }
 }
@@ -471,7 +447,7 @@ function setItems(s) {
   const items = ELEMENTS.filter(e => s.el[e.id].on).map(e => `<li>${phrase(e.id, s.el[e.id])}</li>`);
   return items.length ? `<ul>${items.join('')}</ul>` : `<ul><li class="none">Sin elementos de corrección adicionales</li></ul>`;
 }
-const largoTxt = s => s.largo === '34' ? 'largo 3/4' : 'largo completo';
+const largoTxt = () => 'largo completo';
 
 function rpHTML() {
   const S = state.sets;
@@ -483,10 +459,10 @@ function rpHTML() {
     case 'izquierdo':
       return `<span class="rp">Rp.</span>Plantilla ortopédica pie izquierdo, ${largoTxt(S.L)}, con:${setItems(S.L)}`;
     case 'distinto':
-      return `<span class="rp">Rp.</span>Plantillas ortopédicas bilaterales, con indicación distinta para cada pie:
+      return `<span class="rp">Rp.</span>Plantillas ortopédicas bilaterales, largo completo, con indicación distinta para cada pie:
         <div class="cols">
-          <div><h4>Pie derecho (${largoTxt(S.R)})</h4>${setItems(S.R)}</div>
-          <div><h4>Pie izquierdo (${largoTxt(S.L)})</h4>${setItems(S.L)}</div>
+          <div><h4>Pie derecho</h4>${setItems(S.R)}</div>
+          <div><h4>Pie izquierdo</h4>${setItems(S.L)}</div>
         </div>`;
   }
 }
@@ -500,7 +476,6 @@ function renderPreview() {
   $('pNombre').textContent = nombre;
   $('pRut').textContent = rut;
   $('pEdad').textContent = $('edad').value.trim();
-  $('pCalzado').textContent = $('calzado').value.trim();
   $('pFechaTop').textContent = fecha ? 'Fecha: ' + fecha : '';
   $('pSigFecha').textContent = fecha;
 
@@ -531,10 +506,6 @@ function renderDoctor() {
   $('pSigSpec').textContent = DOCTOR.especialidad;
   $('pSigInst').textContent = DOCTOR.institucion;
   $('docShort').textContent = DOCTOR.nombre;
-  const img = $('pFirma');
-  img.onerror = () => { img.style.display = 'none'; };
-  img.onload = () => { img.style.display = ''; };
-  img.src = DOCTOR.firma;
 }
 
 /* ===================== Escala de la página en pantalla ===================== */
@@ -566,7 +537,6 @@ $('sets').addEventListener('click', ev => {
   const t = ev.target;
   if (t.dataset.copy === 'R-L') { state.sets.L = clone(state.sets.R); renderSets(); renderPreview(); return; }
   const key = t.dataset.set; if (!key) return;
-  if (t.dataset.largo) { state.sets[key].largo = t.dataset.largo; renderSets(); renderPreview(); return; }
   if (t.dataset.on != null) {
     const v = state.sets[key].el[t.dataset.el];
     v.on = t.dataset.on === '1';
@@ -589,7 +559,7 @@ $('sets').addEventListener('change', ev => {
   state.sets[key].el[t.dataset.el].lado = t.value; renderPreview();
 });
 
-['nombre', 'edad', 'calzado', 'dg', 'obs', 'fecha'].forEach(id => $(id).addEventListener('input', renderPreview));
+['nombre', 'edad', 'dg', 'obs', 'fecha'].forEach(id => $(id).addEventListener('input', renderPreview));
 
 function checkRut() {
   const v = $('rut').value; const h = $('rutHint'); const ok = rutValid(v);
@@ -626,7 +596,7 @@ $('btnPrint').addEventListener('click', () => {
 
 $('btnClear').addEventListener('click', () => {
   if (!confirm('Se borrarán todos los datos del paciente y de la plantilla. ¿Desea continuar?')) return;
-  ['nombre', 'rut', 'edad', 'calzado', 'dg', 'obs'].forEach(id => { $(id).value = ''; });
+  ['nombre', 'rut', 'edad', 'dg', 'obs'].forEach(id => { $(id).value = ''; });
   $('fecha').value = todayISO();
   checkRut();
   resetState();
