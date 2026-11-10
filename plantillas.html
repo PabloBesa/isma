@@ -107,31 +107,33 @@
   .p-dg { margin-top: 10px; font-size: 13px; }
   .p-dg b { color: var(--brand); }
 
-  .p-rp { margin-top: 10px; font-size: 13px; line-height: 1.45; }
+  .p-rp { margin-top: 10px; font-size: 13px; line-height: 1.45; flex: none; height: 1.95in; overflow: hidden; }
   .p-rp .rp { font-weight: 700; color: var(--brand); font-size: 15px; margin-right: 6px; }
   .p-rp ul { margin: 4px 0 0; padding-left: 22px; }
+  .p-rp ul.two { columns: 2; column-gap: 28px; }
+  .p-rp li { break-inside: avoid; }
   .p-rp .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; margin-top: 4px; }
   .p-rp .cols h4 { margin: 4px 0 0; font-size: 12.5px; color: var(--brand); }
   .p-rp .cols ul { padding-left: 18px; margin-top: 2px; }
   .p-rp .none { color: #555; font-style: italic; }
   .p-rp .pend { color: var(--warn); font-weight: 600; }
 
-  .p-draw { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 10px; border-top: 1px solid #e3e7ed; padding-top: 8px; }
+  .p-draw { flex: none; height: 4.05in; display: flex; flex-direction: column; margin-top: 10px; border-top: 1px solid #e3e7ed; padding-top: 8px; }
   .feet { flex: 1; min-height: 0; display: flex; justify-content: center; gap: 4%; }
   .foot { width: 38%; height: 100%; display: flex; flex-direction: column; align-items: center; min-height: 0; }
   .foot .ft { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; color: var(--brand); text-transform: uppercase; margin-bottom: 4px; }
   .foot svg { flex: 1; min-height: 0; width: 100%; display: block; }
-  .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; justify-content: center; font-size: 11px; color: #333; margin-top: 6px; min-height: 14px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; justify-content: center; font-size: 11px; color: #333; margin-top: 6px; height: 32px; align-content: flex-start; overflow: hidden; }
   .legend span { display: inline-flex; align-items: center; gap: 5px; }
   .legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
   .orient { text-align: center; font-size: 9.5px; color: #777; margin-top: 2px; }
 
-  .p-obs { margin-top: 8px; font-size: 12.5px; white-space: pre-wrap; }
+  .p-obs { margin-top: 8px; font-size: 12.5px; white-space: pre-wrap; flex: 1; min-height: 0; overflow: hidden; }
   .p-obs b { color: var(--brand); }
 
   .p-foot { display: flex; justify-content: flex-end; margin-top: 10px; }
   .sig { width: 2.9in; text-align: center; font-size: 11.5px; line-height: 1.35; }
-  .sig .img { height: 0.85in; }
+  .sig .img { height: 0.7in; }
   .sig .ln { border-top: 1px solid #222; margin: 2px 0 4px; }
   .sig .n { font-weight: 700; font-size: 12.5px; }
 
@@ -176,7 +178,7 @@
         </div>
       </div>
       <label class="f" for="dg">Diagnóstico</label>
-      <input type="text" id="dg" autocomplete="off" placeholder="ej. Pie plano flexible bilateral">
+      <input type="text" id="dg" maxlength="110" autocomplete="off" placeholder="ej. Pie plano flexible bilateral">
       <div class="row2">
         <div>
           <label class="f" for="fecha">Fecha</label>
@@ -199,7 +201,7 @@
 
     <fieldset>
       <legend>Observaciones</legend>
-      <textarea id="obs" placeholder="Material, indicaciones al ortesista, control, etc."></textarea>
+      <textarea id="obs" maxlength="350" placeholder="Material, indicaciones al ortesista, control, etc."></textarea>
     </fieldset>
   </aside>
 
@@ -415,7 +417,7 @@ function footSVG(side, set) {
   const lab = (x, y, t, c) => `<text x="${X(x)}" y="${y}" fill="${c}" font-size="9.5" font-weight="700" text-anchor="middle" stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round">${t}</text>`;
   let labels = '';
   if (on('ca')) labels += lab(el.ca.lado === 'medial' ? 34 : 104, 66, mmTxt('ca'), EL.ca.color);
-  if (on('br')) labels += lab(70, 115, mmTxt('br'), EL.br.color);
+  if (on('br')) labels += lab(104, 115, mmTxt('br'), EL.br.color);
   if (on('om')) labels += lab(63, 151, mmTxt('om'), EL.om.color);
   if (on('am')) labels += lab(30, 198, mmTxt('am'), EL.am.color);
   if (on('pm')) labels += lab(63, 298, mmTxt('pm'), EL.pm.color);
@@ -443,9 +445,9 @@ function phrase(id, v) {
     default:   return `${e.nombre} de ${m}`;
   }
 }
-function setItems(s) {
+function setItems(s, two) {
   const items = ELEMENTS.filter(e => s.el[e.id].on).map(e => `<li>${phrase(e.id, s.el[e.id])}</li>`);
-  return items.length ? `<ul>${items.join('')}</ul>` : `<ul><li class="none">Sin elementos de corrección adicionales</li></ul>`;
+  return items.length ? `<ul${two ? ' class="two"' : ''}>${items.join('')}</ul>` : `<ul><li class="none">Sin elementos de corrección adicionales</li></ul>`;
 }
 const largoTxt = () => 'largo completo';
 
@@ -453,16 +455,16 @@ function rpHTML() {
   const S = state.sets;
   switch (state.mode) {
     case 'bilateral':
-      return `<span class="rp">Rp.</span>Plantillas ortopédicas bilaterales, ${largoTxt(S.B)}, con:${setItems(S.B)}`;
+      return `<span class="rp">Rp.</span>Plantillas ortopédicas bilaterales, ${largoTxt(S.B)}, con:${setItems(S.B, true)}`;
     case 'derecho':
-      return `<span class="rp">Rp.</span>Plantilla ortopédica pie derecho, ${largoTxt(S.R)}, con:${setItems(S.R)}`;
+      return `<span class="rp">Rp.</span>Plantilla ortopédica pie derecho, ${largoTxt(S.R)}, con:${setItems(S.R, true)}`;
     case 'izquierdo':
-      return `<span class="rp">Rp.</span>Plantilla ortopédica pie izquierdo, ${largoTxt(S.L)}, con:${setItems(S.L)}`;
+      return `<span class="rp">Rp.</span>Plantilla ortopédica pie izquierdo, ${largoTxt(S.L)}, con:${setItems(S.L, true)}`;
     case 'distinto':
       return `<span class="rp">Rp.</span>Plantillas ortopédicas bilaterales, largo completo, con indicación distinta para cada pie:
         <div class="cols">
-          <div><h4>Pie derecho</h4>${setItems(S.R)}</div>
           <div><h4>Pie izquierdo</h4>${setItems(S.L)}</div>
+          <div><h4>Pie derecho</h4>${setItems(S.R)}</div>
         </div>`;
   }
 }
