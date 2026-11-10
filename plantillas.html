@@ -272,7 +272,7 @@ const ELEMENTS = [
   { id: 'pl', nombre: 'Realce posterolateral',    ayuda: 'Cuña desde la base del 5° metatarsiano (tipo Coleman)', mm: true,  color: '#c2410c' },
   { id: 'am', nombre: 'Arco longitudinal medial', ayuda: 'Soporte del arco',                          mm: true,  color: '#15803d' },
   { id: 'br', nombre: 'Barra retrocapital',       ayuda: 'Por detrás de las cabezas metatarsales',    mm: true,  color: '#7e22ce' },
-  { id: 'om', nombre: 'Oliva metatarsal',         ayuda: 'Botón retrocapital central',                mm: true,  color: '#be123c' },
+  { id: 'om', nombre: 'Botón retrocapital',       ayuda: 'Central, por detrás de las cabezas metatarsales',                mm: true,  color: '#be123c' },
   { id: 'ca', nombre: 'Cuña de antepié',          ayuda: 'Medial o lateral',                          mm: true,  color: '#0e7490', lado: true },
   { id: 'at', nombre: 'Alza de talón',            ayuda: 'Discrepancia de longitud de extremidades',  mm: true,  color: '#374151' }
 
@@ -408,15 +408,15 @@ function footSVG(side, set) {
   // Realce posterolateral tipo Coleman: triángulo desde la base del 5° metatarsiano hacia el talón.
   if (on('pl')) shapes += `<polygon points="123,158 152,340 36,340" fill="url(#gpl${sfx})" stroke="${EL.pl.color}" stroke-width=".8" stroke-opacity=".7"/>`;
   if (on('at')) shapes += `<rect x="0" y="240" width="140" height="90" fill="url(#hat${sfx})"/>`;
-  if (on('br')) shapes += `<rect x="0" y="101" width="140" height="17" fill="${EL.br.color}" fill-opacity=".38"/>`;
-  if (on('om')) shapes += `<path d="M63 122 C74 122 76 136 72 146 C69 154 66 158 63 160 C60 158 57 154 54 146 C50 136 52 122 63 122 Z" fill="${EL.om.color}" fill-opacity=".45" stroke="${EL.om.color}" stroke-width=".8"/>`;
+  if (on('br')) shapes += `<rect x="0" y="99" width="140" height="26" fill="${EL.br.color}" fill-opacity=".38"/>`;
+  if (on('om')) shapes += `<path d="M63 99 C74 99 76 113 72 123 C69 131 66 135 63 137 C60 135 57 131 54 123 C50 113 52 99 63 99 Z" fill="${EL.om.color}" fill-opacity=".45" stroke="${EL.om.color}" stroke-width=".8"/>`;
 
   // Etiquetas
   const lab = (x, y, t, c) => `<text x="${X(x)}" y="${y}" fill="${c}" font-size="9.5" font-weight="700" text-anchor="middle" stroke="#fff" stroke-width="3" paint-order="stroke" stroke-linejoin="round">${t}</text>`;
   let labels = '';
   if (on('ca')) labels += lab(el.ca.lado === 'medial' ? 34 : 104, 66, mmTxt('ca'), EL.ca.color);
-  if (on('br')) labels += lab(70, 113, mmTxt('br'), EL.br.color);
-  if (on('om')) labels += lab(63, 175, mmTxt('om'), EL.om.color);
+  if (on('br')) labels += lab(70, 115, mmTxt('br'), EL.br.color);
+  if (on('om')) labels += lab(63, 151, mmTxt('om'), EL.om.color);
   if (on('am')) labels += lab(30, 198, mmTxt('am'), EL.am.color);
   if (on('pm')) labels += lab(63, 298, mmTxt('pm'), EL.pm.color);
   if (on('pl')) labels += lab(92, 270, mmTxt('pl'), EL.pl.color);
